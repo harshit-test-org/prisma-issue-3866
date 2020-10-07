@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id Int @id @map("account_id")
+
+  accountAddresses AccountAddress[]
+  members          Member[]
+
+  @@map("accounts")
+}
+
+model Member {
+  id        Int     @id @map("member_id")
+  accountID Int     @map("account_id")
+  account   Account @relation(fields: [accountID], references: [id])
+
+  @@map("members")
+}
+
+model Address {
+  id Int @id @map("address_id")
+
+  accountAddresses AccountAddress[]
+
+  @@map("addresses")
+}
+
+model AccountAddress {
+  accountID Int     @map("account_id")
+  account   Account @relation(fields: [accountID], references: [id])
+  addressID Int     @map("address_id")
+  address   Address @relation(fields: [addressID], references: [id])
+
+  @@id([accountID, addressID])
+  @@map("account_addresses")
+}
+
